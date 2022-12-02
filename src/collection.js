@@ -4,7 +4,15 @@ import { getTS, getSecondsStr, notFound, parseSetCookie, handleAuthNeeded, REPLA
 
 import { ArchiveResponse } from "./response.js";
 
-const DEFAULT_CSP = "default-src 'unsafe-eval' 'unsafe-inline' 'self' data: blob: mediastream: ws: wss: ; form-action 'self'";
+// const DEFAULT_CSP = "default-src 'unsafe-eval' 'unsafe-inline' 'self' data: blob: mediastream: ws: wss: ; form-action 'self'";
+const DEFAULT_CSP =
+    "default-src 'unsafe-eval' 'unsafe-inline' 'self' data: blob: mediastream: ws: wss: ; form-action 'self'" +
+    "default-src * self blob: data: gap:; " +
+    "style-src * self 'unsafe-inline' blob: data: gap:; script-src * 'self' 'unsafe-eval' 'unsafe-inline' blob: data: gap:; " +
+    "object-src * 'self' blob: data: gap:; " +
+    "img-src * self 'unsafe-inline' blob: data: gap:; " +
+    "connect-src self * 'unsafe-inline' blob: data: gap:; " +
+    "frame-src * self blob: data: gap:;";
 
 
 // ===========================================================================
@@ -283,6 +291,13 @@ class Collection {
         console.log(`resolve redirect ${url} -> ${query.url}`);
         response = await this.store.getResource(query, this.prefix, event, opts);
       }
+    }
+
+    if (!response) {
+      return (async function(){
+        const respT = await fetch(url);
+        return respT.status === 200 ? respT : null;
+      })();
     }
 
     return response;

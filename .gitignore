@@ -3,3 +3,4 @@
 *.warc.gz
 !examples/*.warc
 **/node_modules
+.idea
