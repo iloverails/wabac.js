@@ -137,6 +137,11 @@ class HTMLRewriter
       const name = attr.name;
       const value = attr.value;
 
+      //replace lazy loading
+      if (name.startsWith("data-src") && tagName === "img") {
+        attr.name = "src";
+      }
+
       // js attrs
       if (name.startsWith("on") && value.startsWith("javascript:") && name.slice(2, 3) != "-") {
         attr.value = "javascript:" + rewriter.rewriteJS(value.slice("javascript:".length), {inline: true});
